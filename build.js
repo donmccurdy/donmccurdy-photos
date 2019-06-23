@@ -28,6 +28,8 @@ const photos = media.photos.filter((photo) => {
       const jpgOutputFilename = `dist/${year}/${basename}_${res}.jpg`;
       const webpOutputFilename = `dist/${year}/${basename}_${res}.webp`;
 
+      if (fs.existsSync(jpgOutputFilename)) break;
+
       console.log(`writing... ${basename}`);
 
       await sharp(input)
@@ -41,6 +43,8 @@ const photos = media.photos.filter((photo) => {
     }
 
   }
+
+  console.info(' 🍺  Done.');
 
 })();
 
