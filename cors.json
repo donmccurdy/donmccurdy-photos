@@ -1,0 +1,12 @@
+[
+    {
+      "origin": [
+        "https://donmccurdy.com",
+        "https://www.donmccurdy.com",
+        "http://localhost:5000"
+      ],
+      "responseHeader": ["Content-Type"],
+      "method": ["GET", "HEAD"],
+      "maxAgeSeconds": 3600
+    }
+]
