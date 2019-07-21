@@ -10,7 +10,7 @@
     "acl": "gsutil iam ch allUsers:objectViewer gs://donmccurdy-photos",
     "cors": "gsutil cors set cors.json gs://donmccurdy-photos",
     "predeploy": "cp media.json dist/",
-    "deploy": "gsutil -m cp -r ./dist/* gs://donmccurdy-photos",
+    "deploy": "gsutil -m rsync -r ./dist gs://donmccurdy-photos",
     "postdeploy": "rm dist/media.json"
   },
   "author": "Don McCurdy <dm@donmccurdy.com>",
