@@ -1,36 +1,25 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 const sharp = require('sharp');
-const media = require('./media.json');
+const glob = require('glob');
+const fileMetadata = require('file-metadata');
 
-const photos = media.photos.filter((photo) => {
-  const inputPath = `src/${photo.path}`;
-  if (!fs.existsSync(inputPath)) {
-    throw new Error(`Source path not found: "${inputPath}".`);
-  }
-  return true;
-});
+glob('src/*.jpg', {}, async (_, photos) => {
+  const media = [];
 
-(async () => {
+  for (const srcPath of photos) {
+    const meta = await fileMetadata(srcPath);
+    const input = fs.readFileSync(srcPath);
+    const basename = path.basename(srcPath, path.extname(srcPath));
 
-  for (let photo of photos) {
-    const inputPath = `src/${photo.path}`;
-    const input = fs.readFileSync(inputPath);
-    const year = photo.path.match(/^(\d\d\d\d)\//)[1];
-    const basename = path.basename(inputPath, path.extname(inputPath));
-
-    if (!fs.existsSync(`dist/${year}`)) {
-      fs.mkdirSync(`dist/${year}`);
-    }
-
-    for (let res of [128, 640, 1280, 2880]) {
-      const jpgOutputFilename = `dist/${year}/${basename}_${res}.jpg`;
-      const webpOutputFilename = `dist/${year}/${basename}_${res}.webp`;
+    // Generate JPG and WEBP images in various sizes.
+    for (let res of [256, 640, 1280, 2880]) {
+      const jpgOutputFilename = `dist/${basename}_${res}.jpg`;
+      const webpOutputFilename = `dist/${basename}_${res}.webp`;
 
       if (fs.existsSync(jpgOutputFilename)) break;
 
-      console.log(`writing... ${basename}`);
+      console.log(`writing... ${basename}@${res}px`);
 
       await sharp(input)
         .resize(res)
@@ -39,12 +28,23 @@ const photos = media.photos.filter((photo) => {
       await sharp(input)
         .resize(res)
         .toFile(webpOutputFilename);
-
     }
 
+    // Metadata.
+    media.push({
+      id: basename,
+      title: meta.title,
+      date: meta.contentCreationDate,
+      copyright: meta.copyright,
+      acquisitionMake: meta.acquisitionMake,
+      acquisitionModel: meta.acquisitionModel,
+      aperture: meta.aperture,
+      exposureTimeSeconds: meta.exposureTimeSeconds,
+    });
   }
 
+  media.sort((a, b) => a.date > b.date ? 1 : -1);
+  fs.writeFileSync('dist/media.json', JSON.stringify({photos: media}));
+
   console.info(' 🍺  Done.');
-
-})();
-
+});

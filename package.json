@@ -9,9 +9,7 @@
     "clean": "rm -rf dist/*",
     "acl": "gsutil iam ch allUsers:objectViewer gs://donmccurdy-photos",
     "cors": "gsutil cors set cors.json gs://donmccurdy-photos",
-    "predeploy": "cp media.json dist/",
-    "deploy": "gsutil -m rsync -r ./dist gs://donmccurdy-photos",
-    "postdeploy": "rm dist/media.json"
+    "deploy": "gsutil -m rsync -r ./dist gs://donmccurdy-photos"
   },
   "author": "Don McCurdy <dm@donmccurdy.com>",
   "repository": {
@@ -20,6 +18,8 @@
   },
   "license": "UNLICENSED",
   "devDependencies": {
+    "file-metadata": "^1.0.0",
+    "glob": "^7.1.4",
     "sharp": "^0.21.3"
   }
 }
