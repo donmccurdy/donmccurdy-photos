@@ -20,6 +20,6 @@
   "devDependencies": {
     "file-metadata": "^1.0.0",
     "glob": "^7.1.4",
-    "sharp": "^0.21.3"
+    "sharp": "^0.25.4"
   }
 }
